@@ -26,8 +26,8 @@ public class RobotContainer
 	// Subsystems:
 	private final DriveTrain driveTrain = new DriveTrain();
 
-	// I/O devices:
-	private final XboxController gameController = new XboxController(1);
+	// OI devices:
+	//private final XboxController gameController = new XboxController(1);
 	private final Joystick leftStick = new Joystick(2);
 	private final Joystick rightStick = new Joystick(3);
 
