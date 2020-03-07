@@ -271,6 +271,11 @@ public class Turret extends SubsystemBase
 		return !upHoodLimit.get();
 	}
 
+	public double getCurrentHoodPosition()
+	{
+		return hoodMotor.getSelectedSensorPosition();
+	}
+
 	@Override
 	public void periodic()
 	{

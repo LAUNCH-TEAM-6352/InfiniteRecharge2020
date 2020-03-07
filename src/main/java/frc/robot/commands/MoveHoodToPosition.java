@@ -7,66 +7,69 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.TurretConstants;
 import frc.robot.subsystems.Turret;
 
 /**
- * An example command that uses an example subsystem.
+ * Moves the hood to the up position.
  */
-public class RunTurretWithGameController extends CommandBase
+public class MoveHoodToPosition extends CommandBase
 {
 	@SuppressWarnings(
 	{ "PMD.UnusedPrivateField", "PMD.SingularField" })
-	private final Turret turret;
-	private final XboxController controller;
 
-	public RunTurretWithGameController(Turret turret, XboxController controller)
+	private Turret turret;
+	private String key = null;
+	private double position = 0;
+
+	private MoveHoodToPosition(Turret turret)
 	{
 		this.turret = turret;
-		this.controller = controller;
+		addRequirements(turret);
+	}
 
-		// Use addRequirements() here to declare subsystem dependencies.
-		if (turret != null)
-		{
-			addRequirements(turret);
-		}
+	public MoveHoodToPosition(Turret turret, String key)
+	{
+		this(turret);
+		this.key = key;
+	}
+
+	public MoveHoodToPosition(Turret turret, double position)
+	{
+		this(turret);
+		this.position = position;
 	}
 
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize()
 	{
+		if (key != null)
+		{
+			position = SmartDashboard.getNumber(key, 0);
+		}
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute()
 	{
-		if (turret != null)
-		{
-			turret.setHood(trim(controller.getY(Hand.kRight)) * -1.0);
-			turret.setAzimuth(trim(controller.getX(Hand.kLeft)));
-		}
+		turret.setHood(TurretConstants.moveHoodUpAutoPercentage);
 	}
 
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted)
 	{
-		turret.stop();
+		turret.setHood(0);
 	}
 
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished()
 	{
-		return false;
-	}
-
-	private double trim(double v)
-	{
-		return Math.abs(v) <= 0.1 ? 0.0 : v;
+		return Math.abs(turret.getCurrentHoodPosition() - position) <= 1000;
 	}
 }

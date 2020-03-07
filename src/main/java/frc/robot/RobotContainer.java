@@ -19,6 +19,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AimShooterUsingLimelight;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.MoveHoodToDownPosition;
+import frc.robot.commands.MoveHoodToPosition;
 import frc.robot.commands.MoveHoodToUpPosition;
 import frc.robot.commands.MoveTurretToCenterPosition;
 import frc.robot.commands.RunTurretWithGameController;
@@ -88,6 +89,8 @@ public class RobotContainer
 
 		// Configure the button bindings
 		configureButtonBindings();
+
+		initSmartDashboard();
 	}
 
 	/**
@@ -131,13 +134,7 @@ public class RobotContainer
 
 		//SmartDashboard.putData("Target Shooter", new SetPipelineAndAimShooter(turret));
 
-		SmartDashboard.putData("Move Hood", new StartEndCommand(
-			() -> turret.setHoodPosition(
-				SmartDashboard.getNumber(DashboardConstants.hoodTargetPositionKey, 0)),
-			() -> turret.setHood(0),
-			turret
-			)
-		);
+		SmartDashboard.putData("Move Hood", new MoveHoodToPosition(turret, DashboardConstants.hoodTargetPositionKey));
 
 		SmartDashboard.putData("Run Shooter Vel", new StartEndCommand(
 			() -> shooter.setVelocity(

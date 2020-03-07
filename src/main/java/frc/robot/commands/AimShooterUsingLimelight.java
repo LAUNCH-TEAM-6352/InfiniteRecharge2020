@@ -10,9 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.DashboardConstants;
-import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.TargetingConstants;
-import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 import frc.util.LimelightCamera;
 

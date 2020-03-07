@@ -75,8 +75,8 @@ public final class Constants
 		public static final double peakVelocityUnitsPer100ms = 153000.0;
 
 		public static final int profileSlot = 0;
-		public static final double pidP = 0.125;
-		public static final double pidI = 0.0;
+		public static final double pidP = 0.020;
+		public static final double pidI = 0.0002;
 		public static final double pidD = 0.0;
 		public static final int pidIZ = 3000;
 		public static final double pidFF = 0.0;
@@ -179,7 +179,7 @@ public final class Constants
 		public static final boolean isIntakeMotorInverted = true;
 
 		public static final int pcmChannel = 0;
-		public static final int inSolenoidChannel = 1;
+		public static final int inSolenoidChannel = 0;
 		public static final int outSolenoidChannel = 1;
 	}
 
