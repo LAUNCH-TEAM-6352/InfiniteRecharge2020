@@ -114,7 +114,7 @@ public final class Constants
 
 		public static final int channel = 9;
 		public static final int profileSlot = 0;
-		public static final double pidP = 0.003;
+		public static final double pidP = 0.8;
 		public static final double pidI = 0.00001;
 		public static final double pidD = 0.03;
 		public static final int pidIZ = 3000;

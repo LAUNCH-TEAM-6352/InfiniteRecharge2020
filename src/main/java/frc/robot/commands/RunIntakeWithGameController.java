@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Turret;
 
 /**
  * An example command that uses an example subsystem.
@@ -57,10 +56,5 @@ public class RunIntakeWithGameController extends CommandBase
 	public boolean isFinished()
 	{
 		return false;
-	}
-
-	private double trim(double v)
-	{
-		return Math.abs(v) <= 0.5 ? 0.0 : v;
 	}
 }
