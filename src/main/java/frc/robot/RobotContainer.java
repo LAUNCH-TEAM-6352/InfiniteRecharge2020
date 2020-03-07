@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import java.beans.IndexedPropertyChangeEvent;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -24,6 +26,7 @@ import frc.robot.commands.MoveHoodToUpPosition;
 import frc.robot.commands.MoveTurretToCenterPosition;
 import frc.robot.commands.RunTurretWithGameController;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
@@ -49,6 +52,7 @@ public class RobotContainer
 	private Turret turret;
 	private DriveTrain driveTrain;
 	private Intake intake;
+	private Indexer indexer;
 
 	// OI devices:
 	private final XboxController xboxController;
@@ -73,6 +77,7 @@ public class RobotContainer
 		shooter = new Shooter(xboxController);
 		turret = new Turret(xboxController);
 		intake = new Intake();
+		indexer = new Indexer();
 
 		// Create camera:
 		limelightCamera = LimelightCamera.getInstance();
@@ -124,6 +129,7 @@ public class RobotContainer
 	{
 		SmartDashboard.putNumber(DashboardConstants.shooterTargetVelocityKey, DashboardConstants.shooterTargetVelocityDefault);
 		SmartDashboard.putNumber(DashboardConstants.hoodTargetPositionKey, DashboardConstants.hoodTargetPositionDefault);
+		SmartDashboard.putNumber(DashboardConstants.indexerPercentageKey, DashboardConstants.indexerPercentageDefault);
 
 		SmartDashboard.putData("LL: Driver1", new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineDriver1)));
 		SmartDashboard.putData("LL: Driver2", new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineDriver2)));
@@ -149,6 +155,14 @@ public class RobotContainer
 				SmartDashboard.getNumber(DashboardConstants.shooterTargetPercentageKey, 0)),
 			() -> shooter.setPercentage(0),
 			shooter
+			)
+		);
+
+		SmartDashboard.putData("Run Indexer %", new StartEndCommand(
+			() -> indexer.set(
+				SmartDashboard.getNumber(DashboardConstants.indexerPercentageKey, 0)),
+			() -> indexer.stop(),
+			indexer
 			)
 		);
 	}

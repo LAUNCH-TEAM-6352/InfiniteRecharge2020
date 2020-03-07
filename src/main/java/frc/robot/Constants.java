@@ -168,8 +168,8 @@ public final class Constants
 		public static final double maxAzimuthSpeed = 1.0;
 		public static final double minAzimuthSpeed = 0.1;
 		public static final double maxAzimuthDelta = 30.0;
-		public static final double minAzimuthDelta = 0.5;
-		public static final double azimuthTolerance = 0.5;
+		public static final double minAzimuthDelta = 0.2;
+		public static final double azimuthTolerance = 0.2;
 	}
 
 
@@ -231,6 +231,9 @@ public final class Constants
 
 		public static final String hoodTargetPositionKey = "Hood Target Pos";
 		public static final String hoodCurrentPositionKey = "Hood Current Pos";
+
+		public static final double indexerPercentageDefault = 0.60;
+		public static final String indexerPercentageKey = "Indexer %";
 
 		public static final String hoodMotorKey = "Hood Motor";
 	}

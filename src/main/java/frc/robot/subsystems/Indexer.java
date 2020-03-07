@@ -10,41 +10,28 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.IndexerConstants;
 
 /**
  * Add your docs here.
  */
-public class Intake extends SubsystemBase
+public class Indexer extends SubsystemBase
 {
-	private DoubleSolenoid solenoid = new DoubleSolenoid(IntakeConstants.outSolenoidChannel, IntakeConstants.inSolenoidChannel);
+	private VictorSPX rearMotor = new VictorSPX(IndexerConstants.rearMotorChannel);
 
-	private VictorSPX motor = new VictorSPX(IntakeConstants.motorChannel);
-
-	public Intake()
+	public Indexer()
 	{
-		motor.setInverted(IntakeConstants.isIntakeMotorInverted);
+		rearMotor.setInverted(IndexerConstants.isRearMotorInverted);
 	}
 
 	public void set(double percentage)
 	{
-		motor.set(ControlMode.PercentOutput, percentage);
+		rearMotor.set(ControlMode.PercentOutput, percentage);
 	}
 
 	public void stop()
 	{
 		set(0);
-	}
-
-	public void moveIntakeIn()
-	{
-		solenoid.set(DoubleSolenoid.Value.kReverse);
-	}
-
-	public void moveIntakeOut()
-	{
-		solenoid.set(DoubleSolenoid.Value.kForward);
 	}
 }
