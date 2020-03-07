@@ -10,6 +10,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.Constants.LimelightConstants.OIConstants;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,9 +28,9 @@ public class RobotContainer
 	private final DriveTrain driveTrain = new DriveTrain();
 
 	// OI devices:
-	//private final XboxController gameController = new XboxController(1);
-	private final Joystick leftStick = new Joystick(2);
-	private final Joystick rightStick = new Joystick(3);
+	private final XboxController gameController = new XboxController(OIConstants.xboxControllerPort);
+	private final Joystick leftStick = new Joystick(OIConstants.leftJoystickPort);
+	private final Joystick rightStick = new Joystick(OIConstants.rightJoystickPort);
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
