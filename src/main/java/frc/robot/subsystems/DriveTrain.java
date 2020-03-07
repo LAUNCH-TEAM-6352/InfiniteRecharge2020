@@ -9,7 +9,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,20 +18,20 @@ import frc.robot.Constants.DriveTrainConstants;
 
 public class DriveTrain extends SubsystemBase
 {
-	private final TalonSRX leftMotor1;
-	private final TalonSRX leftMotor2;
-	private final TalonSRX rightMotor1;
-	private final TalonSRX rightMotor2;
+	private final VictorSPX leftMotor1;
+	private final VictorSPX leftMotor2;
+	private final VictorSPX rightMotor1;
+	private final VictorSPX rightMotor2;
 
 	/**
 	 * Creates a new DriveTrain.
 	 */
 	public DriveTrain()
 	{
-		leftMotor1 = new TalonSRX(DriveTrainConstants.LeftMotor1Channel);
-		leftMotor2 = new TalonSRX(DriveTrainConstants.LeftMotor2Channel);
-		rightMotor1 = new TalonSRX(DriveTrainConstants.RightMotor1Channel);
-		rightMotor2 = new TalonSRX(DriveTrainConstants.RightMotor2Channel);
+		leftMotor1 = new VictorSPX(DriveTrainConstants.LeftMotor1Channel);
+		leftMotor2 = new VictorSPX(DriveTrainConstants.LeftMotor2Channel);
+		rightMotor1 = new VictorSPX(DriveTrainConstants.RightMotor1Channel);
+		rightMotor2 = new VictorSPX(DriveTrainConstants.RightMotor2Channel);
 
 		leftMotor1.setInverted(DriveTrainConstants.LeftMotorInverted);
 		rightMotor1.setInverted(DriveTrainConstants.RightMotorInverted);
