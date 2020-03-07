@@ -33,8 +33,8 @@ public class DriveTrain extends SubsystemBase
 		rightMotor1 = new VictorSPX(DriveTrainConstants.rightFrontMotorChannel);
 		rightMotor2 = new VictorSPX(DriveTrainConstants.rightRearMotorChannel);
 
-		leftMotor1.setInverted(DriveTrainConstants.LeftMotorInverted);
-		rightMotor1.setInverted(DriveTrainConstants.RightMotorInverted);
+		leftMotor1.setInverted(DriveTrainConstants.leftMotorInverted);
+		rightMotor1.setInverted(DriveTrainConstants.rightMotorInverted);
 
 		leftMotor2.setInverted(InvertType.FollowMaster);
 		rightMotor2.setInverted(InvertType.FollowMaster);

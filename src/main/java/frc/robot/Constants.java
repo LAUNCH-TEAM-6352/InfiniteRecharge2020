@@ -26,8 +26,8 @@ public final class Constants
 		public static final int rightFrontMotorChannel = 13;
 		public static final int rightRearMotorChannel = 14;
 
-		public static final boolean LeftMotorInverted = true;
-		public static final boolean RightMotorInverted = true;
+		public static final boolean leftMotorInverted = true;
+		public static final boolean rightMotorInverted = false;
 	}
 
 	public static final class LimelightConstants
