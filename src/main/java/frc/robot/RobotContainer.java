@@ -10,10 +10,29 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.Constants.LimelightConstants.OIConstants;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.DashboardConstants;
+import frc.robot.Constants.LimelightConstants;
+import frc.robot.Constants.OIConstants;
+import frc.robot.commands.AimShooterUsingLimelight;
 import frc.robot.commands.DriveWithJoysticks;
+import frc.robot.commands.MoveHoodToDownPosition;
+import frc.robot.commands.MoveHoodToUpPosition;
+import frc.robot.commands.MoveTurretToCenterPosition;
+import frc.robot.commands.RunTurretWithGameController;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Turret;
+import frc.util.LimelightCamera;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -25,20 +44,47 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class RobotContainer
 {
 	// Subsystems:
-	private final DriveTrain driveTrain = new DriveTrain();
+	private Shooter shooter;
+	private Turret turret;
+	private DriveTrain driveTrain;
+	private Intake intake;
 
 	// OI devices:
-	private final XboxController gameController = new XboxController(OIConstants.xboxControllerPort);
-	private final Joystick leftStick = new Joystick(OIConstants.leftJoystickPort);
-	private final Joystick rightStick = new Joystick(OIConstants.rightJoystickPort);
+	private final XboxController xboxController;
+	private final Joystick leftStick;
+	private final Joystick rightStick;
+
+	// Camera:
+	private final LimelightCamera limelightCamera;
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer()
 	{
-		// Set up commands:
+		// Create OI devices:
+		xboxController = new XboxController(OIConstants.xboxControllerPort);
+		leftStick = new Joystick(OIConstants.leftJoystickPort);
+		rightStick = new Joystick(OIConstants.rightJoystickPort);
+
+		// Create subsystems:
+		driveTrain = new DriveTrain();
+		shooter = new Shooter(xboxController);
+		turret = new Turret(xboxController);
+		intake = new Intake();
+
+		// Create camera:
+		limelightCamera = LimelightCamera.getInstance();
+
+		// Configure default commands:
 		driveTrain.setDefaultCommand(new DriveWithJoysticks(driveTrain, leftStick, rightStick));
+
+		turret.setDefaultCommand(new RunTurretWithGameController(turret, xboxController));
+
+		shooter.setDefaultCommand(new RunCommand(
+			() -> shooter.setPercentage(xboxController.getTriggerAxis(Hand.kLeft)),
+			shooter
+		));
 
 		// Configure the button bindings
 		configureButtonBindings();
@@ -52,6 +98,62 @@ public class RobotContainer
 	 */
 	private void configureButtonBindings()
 	{
+		new JoystickButton(xboxController, Button.kStart.value)
+			.whenPressed(new AimShooterUsingLimelight(turret));
+		
+		new JoystickButton(xboxController, Button.kStickLeft.value)
+			.whenPressed(new MoveTurretToCenterPosition(turret));
+
+		new JoystickButton(xboxController, Button.kY.value)
+			.whenPressed(new MoveHoodToUpPosition(turret));
+
+		new JoystickButton(xboxController, Button.kA.value)
+			.whenPressed(new MoveHoodToDownPosition(turret));
+		
+		new JoystickButton(xboxController, Button.kBumperLeft.value)
+			.whenPressed(new InstantCommand(() -> intake.moveIntakeOut()));
+		
+		new JoystickButton(xboxController, Button.kBumperRight.value)
+			.whenPressed(new InstantCommand(() -> intake.moveIntakeIn()));
+	}
+
+	private void initSmartDashboard()
+	{
+		SmartDashboard.putNumber(DashboardConstants.shooterTargetVelocityKey, DashboardConstants.shooterTargetVelocityDefault);
+		SmartDashboard.putNumber(DashboardConstants.hoodTargetPositionKey, DashboardConstants.hoodTargetPositionDefault);
+
+		SmartDashboard.putData("LL: Driver1", new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineDriver1)));
+		SmartDashboard.putData("LL: Driver2", new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineDriver2)));
+		SmartDashboard.putData("LL: Driver3", new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineDriver3)));
+		SmartDashboard.putData("LL: Vision1", new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineVision1)));
+		SmartDashboard.putData("LL: Vision2", new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineVision2)));
+		SmartDashboard.putData("LL: Vision3", new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineVision3)));
+
+		//SmartDashboard.putData("Target Shooter", new SetPipelineAndAimShooter(turret));
+
+		SmartDashboard.putData("Move Hood", new StartEndCommand(
+			() -> turret.setHoodPosition(
+				SmartDashboard.getNumber(DashboardConstants.hoodTargetPositionKey, 0)),
+			() -> turret.setHood(0),
+			turret
+			)
+		);
+
+		SmartDashboard.putData("Run Shooter Vel", new StartEndCommand(
+			() -> shooter.setVelocity(
+				SmartDashboard.getNumber(DashboardConstants.shooterTargetVelocityKey, 0)),
+			() -> shooter.setPercentage(0),
+			shooter
+			)
+		);
+
+		SmartDashboard.putData("Run Shooter %", new StartEndCommand(
+			() -> shooter.setPercentage(
+				SmartDashboard.getNumber(DashboardConstants.shooterTargetPercentageKey, 0)),
+			() -> shooter.setPercentage(0),
+			shooter
+			)
+		);
 	}
 
 	/**

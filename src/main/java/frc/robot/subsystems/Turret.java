@@ -17,9 +17,9 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.LimelightConstants.DashboardConstants;
-import frc.robot.Constants.LimelightConstants.HoodMotorConstants;
-import frc.robot.Constants.LimelightConstants.TurretConstants;
+import frc.robot.Constants.DashboardConstants;
+import frc.robot.Constants.HoodMotorConstants;
+import frc.robot.Constants.TurretConstants;
 
 /***
  * A subsystem that controls the turret.
