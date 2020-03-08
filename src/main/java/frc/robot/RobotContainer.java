@@ -10,9 +10,16 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.DashboardConstants;
 import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.IntakeConstants;
@@ -23,12 +30,12 @@ import frc.robot.Constants.TurretConstants;
 import frc.robot.commands.AimShooterUsingLimelight;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.ExtendClimberActuators;
-import frc.robot.commands.MoveHoodToDownPosition;
 import frc.robot.commands.MoveHoodToPosition;
-import frc.robot.commands.MoveHoodToUpPosition;
 import frc.robot.commands.MoveTurretToCenterPosition;
 import frc.robot.commands.RunClimberWithGameController;
 import frc.robot.commands.RunIndexer;
+import frc.robot.commands.RunIntake;
+import frc.robot.commands.RunShooter;
 import frc.robot.commands.RunTurretWithGameController;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
@@ -37,11 +44,6 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 import frc.util.LimelightCamera;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 
 /**
@@ -92,14 +94,7 @@ public class RobotContainer
 
 		// Configure default commands:
 		driveTrain.setDefaultCommand(new DriveWithJoysticks(driveTrain, leftStick, rightStick));
-
 		turret.setDefaultCommand(new RunTurretWithGameController(turret, gameController));
-
-		shooter.setDefaultCommand(new RunCommand(
-			() -> shooter.setPercentage(gameController.getTriggerAxis(Hand.kLeft)),
-			shooter
-		));
-
 		climber.setDefaultCommand(new RunClimberWithGameController(climber, gameController));
 
 		// Configure the button bindings
@@ -116,34 +111,80 @@ public class RobotContainer
 	 */
 	private void configureButtonBindings()
 	{
+		// Start shooter motors, switch to vision procesing, aim turret
 		new JoystickButton(gameController, Button.kA.value)
-			.whenPressed(new AimShooterUsingLimelight(turret));
-		
+			.whenPressed(new ParallelCommandGroup(
+				new RunShooter(shooter, DashboardConstants.shooterTargetVelocityKey),
+				new SequentialCommandGroup(
+					new ConditionalCommand(
+						new SequentialCommandGroup(
+							new InstantCommand(() ->
+								LimelightCamera.getInstance().setPipeline(LimelightConstants.targetingPipelines[LimelightCamera.getInstance().getPipeline()])
+							),
+							new WaitCommand(2.0)
+						),
+						new WaitCommand(0),
+						() -> LimelightConstants.targetingPipelines[LimelightCamera.getInstance().getPipeline()] >= 0
+					),
+					new AimShooterUsingLimelight(turret)
+				)		
+			));
+
+		// Stop the shooter motors and restore the Limelight to driver mode:
+		new JoystickButton(gameController, Button.kY.value)
+			.whenPressed(new ParallelCommandGroup(
+				new InstantCommand(() -> shooter.stop(), shooter),
+				new ConditionalCommand(
+					new InstantCommand(() ->
+						LimelightCamera.getInstance().setPipeline(LimelightConstants.drivingPipelines[LimelightCamera.getInstance().getPipeline()])
+					),
+					new WaitCommand(0),
+					() -> LimelightConstants.drivingPipelines[LimelightCamera.getInstance().getPipeline()] >= 0
+				)	
+			));
+
+		// Run the indexer forward:
+		new JoystickButton(gameController, Button.kX.value)
+			.whileHeld(new RunIndexer(indexer, DashboardConstants.indexerForwardPercentageKey));
+
+		// Run the indexer reverse:
+		new JoystickButton(gameController, Button.kB.value)
+			.whileHeld(new RunIndexer(indexer, DashboardConstants.indexerReversePercentageKey));
+
+		// Move the turret to the center position:
 		new JoystickButton(gameController, Button.kStickLeft.value)
 			.whenPressed(new MoveTurretToCenterPosition(turret));
 
+		// Set the limelight to 1x driver mode:
 		new JoystickButton(gameController, Button.kBumperLeft.value)
 			.whenPressed(new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineDriver1)));
 
+		// Set the limelight to 2x driver mode:
 		new JoystickButton(gameController, Button.kBumperRight.value)
 			.whenPressed(new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineDriver2)));
 
+		// Extend the climber actuators:
 		new JoystickButton(gameController, Button.kStart.value)
 			.whenPressed(new ExtendClimberActuators(climber));
 
 		// Button 1 is the trigger
+		// Run the intake in the in direction:
 		new JoystickButton(leftStick, 1)
-			.whileHeld(new RunIndexer(intake, DashboardConstants.intakeInPercentageKey));
+			.whileHeld(new RunIntake(intake, DashboardConstants.intakeInPercentageKey));
 
+		// RUn the intake in the out direction:
 		new JoystickButton(rightStick, 1)
-			.whileHeld(new RunIndexer(intake, DashboardConstants.intakeOutPercentageKey));
+			.whileHeld(new RunIntake(intake, DashboardConstants.intakeOutPercentageKey));
 
+		// Move the intake out:
 		new JoystickButton(leftStick, 6)
 			.whenPressed(new InstantCommand(() -> intake.moveIntakeOut()));
 		
+		// Move the intake in:
 		new JoystickButton(rightStick, 5)
 			.whenPressed(new InstantCommand(() -> intake.moveIntakeIn()));
 		
+		// Deploy the climber linear actuators:
 		new JoystickButton(leftStick, 11)
 			.whenPressed(new InstantCommand(() -> climber.deployActuators()));		
 	}
@@ -152,7 +193,8 @@ public class RobotContainer
 	{
 		SmartDashboard.putNumber(DashboardConstants.shooterTargetVelocityKey, ShooterConstants.defaultVelocity);
 		SmartDashboard.putNumber(DashboardConstants.hoodTargetPositionKey, TurretConstants.defaultHoodTargetPosition);
-		SmartDashboard.putNumber(DashboardConstants.indexerPercentageKey, IndexerConstants.defaultSpeed);
+		SmartDashboard.putNumber(DashboardConstants.indexerForwardPercentageKey, IndexerConstants.defaultForwardSpeed);
+		SmartDashboard.putNumber(DashboardConstants.indexerReversePercentageKey, IndexerConstants.defaultReverseSpeed);
 		SmartDashboard.putNumber(DashboardConstants.intakeInPercentageKey, IntakeConstants.defaultInSpeed);
 		SmartDashboard.putNumber(DashboardConstants.intakeOutPercentageKey, IntakeConstants.defaultOutSpeed);
 
@@ -163,7 +205,7 @@ public class RobotContainer
 		SmartDashboard.putData("LL: Vision2", new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineVision2)));
 		SmartDashboard.putData("LL: Vision3", new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineVision3)));
 
-		SmartDashboard.putData("Undeploy Climber Actuaturs", new InstantCommand(() -> climber.undeployActuators()));
+		SmartDashboard.putData("Undeploy Climber Actuators", new InstantCommand(() -> climber.undeployActuators()));
 
 		//SmartDashboard.putData("Target Shooter", new SetPipelineAndAimShooter(turret));
 
@@ -187,7 +229,7 @@ public class RobotContainer
 
 		SmartDashboard.putData("Run Indexer %", new StartEndCommand(
 			() -> indexer.set(
-				SmartDashboard.getNumber(DashboardConstants.indexerPercentageKey, 0)),
+				SmartDashboard.getNumber(DashboardConstants.indexerForwardPercentageKey, 0)),
 			() -> indexer.stop(),
 			indexer
 			)

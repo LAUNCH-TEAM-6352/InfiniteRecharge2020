@@ -68,6 +68,22 @@ public final class Constants
 			pipelineVision1,
 			pipelineVision1
 		};
+
+		// The desired driving pipeline for each
+		// pipeline. -1 represents no change.
+		public static final int[] drivingPipelines =
+		{
+			-1,
+			-1,
+			-1,
+			pipelineDriver1,
+			pipelineDriver2,
+			pipelineDriver3,
+			pipelineDriver1,
+			pipelineDriver1,
+			pipelineDriver1,
+			pipelineDriver1
+		};
 	}
 
 	public static final class HoodMotorConstants
@@ -197,7 +213,8 @@ public final class Constants
 	{
 		public static final int rearMotorChannel = 51;
 		public static final boolean isRearMotorInverted = true;
-		public static final double defaultSpeed = 0.60;
+		public static final double defaultForwardSpeed = 0.60;
+		public static final double defaultReverseSpeed = -0.60;
 	}
 
 	public static final class ClimberConstants
@@ -245,7 +262,8 @@ public final class Constants
 		public static final String hoodTargetPositionKey = "Hood Target Pos";
 		public static final String hoodCurrentPositionKey = "Hood Current Pos";
 
-		public static final String indexerPercentageKey = "Indexer %";
+		public static final String indexerForwardPercentageKey = "Indexer Fwd %";
+		public static final String indexerReversePercentageKey = "Indexer Rev %";
 
 		public static final String intakeInPercentageKey = "Intake In %";
 		public static final String intakeOutPercentageKey = "Intake Out %";

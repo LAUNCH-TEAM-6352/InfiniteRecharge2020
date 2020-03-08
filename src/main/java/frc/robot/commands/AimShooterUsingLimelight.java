@@ -71,7 +71,7 @@ public class AimShooterUsingLimelight extends CommandBase
 	@Override
 	public void end(boolean interrupted)
 	{
-		//turret.stop();
+		turret.stop();
 	}
 
 	// Returns true when the command should end.

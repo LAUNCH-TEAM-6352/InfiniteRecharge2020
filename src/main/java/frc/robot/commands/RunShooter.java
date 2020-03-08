@@ -9,35 +9,35 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Shooter;
 
 /**
- * An example command that uses an example subsystem.
+ * Runs the shooter motors at a particular velocity.
  */
-public class RunIndexer extends CommandBase
+public class RunShooter extends CommandBase
 {
 	@SuppressWarnings(
 	{ "PMD.UnusedPrivateField", "PMD.SingularField" })
-	private final Indexer indexer;
+	private final Shooter shooter;
 	private String key = null;
-	private double percentage;
+	private double velocity;
 
-	private RunIndexer(Indexer indexer)
+	private RunShooter(Shooter shooter)
 	{
-		this.indexer = indexer;
-		addRequirements(indexer);
+		this.shooter = shooter;
+		addRequirements(shooter);
 	}
 
-	public RunIndexer(Indexer indexer, String key)
+	public RunShooter(Shooter shooter, String key)
 	{
-		this(indexer);
+		this(shooter);
 		this.key = key;
 	}
 
-	public RunIndexer(Indexer indexer, double percentage)
+	public RunShooter(Shooter shooter, double velocity)
 	{
-		this(indexer);
-		this.percentage = percentage;
+		this(shooter);
+		this.velocity = velocity;
 	}
 
 	// Called when the command is initially scheduled.
@@ -46,7 +46,7 @@ public class RunIndexer extends CommandBase
 	{
 		if (key != null)
 		{
-			percentage = SmartDashboard.getNumber(key, 0.0);
+			velocity = SmartDashboard.getNumber(key, 0.0);
 		}
 	}
 
@@ -54,14 +54,14 @@ public class RunIndexer extends CommandBase
 	@Override
 	public void execute()
 	{
-		indexer.set(percentage);
+		shooter.setVelocity(velocity);
 	}
 
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted)
 	{
-		indexer.stop();
+		shooter.stop();
 	}
 
 	// Returns true when the command should end.
