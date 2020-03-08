@@ -9,40 +9,35 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.TurretConstants;
-import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Intake;
 
 /**
- * Moves the hood to the up position.
+ * An example command that uses an example subsystem.
  */
-public class MoveHoodToPosition extends CommandBase
+public class RunIntake extends CommandBase
 {
 	@SuppressWarnings(
 	{ "PMD.UnusedPrivateField", "PMD.SingularField" })
-
-	private Turret turret;
+	private final Intake intake;
 	private String key = null;
-	private double position = 0;
+	private double percentage;
 
-	private MoveHoodToPosition(Turret turret)
+	private RunIntake(Intake intake)
 	{
-		this.turret = turret;
-		addRequirements(turret);
-
-		// This is a backup in case we don't zero in on the target position:
-		withTimeout(TurretConstants.moveHoodToPositionTimeoutInSeconds);
+		this.intake = intake;
+		addRequirements(intake);
 	}
 
-	public MoveHoodToPosition(Turret turret, String key)
+	public RunIntake(Intake intake, String key)
 	{
-		this(turret);
+		this(intake);
 		this.key = key;
 	}
 
-	public MoveHoodToPosition(Turret turret, double position)
+	public RunIntake(Intake intake, double percentage)
 	{
-		this(turret);
-		this.position = position;
+		this(intake);
+		this.percentage = percentage;
 	}
 
 	// Called when the command is initially scheduled.
@@ -51,7 +46,7 @@ public class MoveHoodToPosition extends CommandBase
 	{
 		if (key != null)
 		{
-			position = SmartDashboard.getNumber(key, 0);
+			percentage = SmartDashboard.getNumber(key, 0.0);
 		}
 	}
 
@@ -59,20 +54,20 @@ public class MoveHoodToPosition extends CommandBase
 	@Override
 	public void execute()
 	{
-		turret.setHoodPosition(position);
+		intake.set(percentage);
 	}
 
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted)
 	{
-		turret.setHood(0);
+		intake.stop();
 	}
 
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished()
 	{
-		return Math.abs(turret.getCurrentHoodPosition() - position) <= TurretConstants.moveHoodToPositionTolerance;
+		return false;
 	}
 }

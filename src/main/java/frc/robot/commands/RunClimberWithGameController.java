@@ -8,27 +8,29 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Turret;
 
 /**
- * An example command that uses an example subsystem.
+ * Operates the climber actuators using the game controller.
  */
-public class RunIntakeWithGameController extends CommandBase
+public class RunClimberWithGameController extends CommandBase
 {
 	@SuppressWarnings(
 	{ "PMD.UnusedPrivateField", "PMD.SingularField" })
-	private final Intake intake;
+	private final Climber climber;
 	private final XboxController controller;
 
-	public RunIntakeWithGameController(Intake intake, XboxController controller)
+	public RunClimberWithGameController(Climber climber, XboxController controller)
 	{
-		this.intake = intake;
+		this.climber = climber;
 		this.controller = controller;
 
 		// Use addRequirements() here to declare subsystem dependencies.
-		addRequirements(intake);
+		addRequirements(climber);
 	}
 
 	// Called when the command is initially scheduled.
@@ -41,14 +43,14 @@ public class RunIntakeWithGameController extends CommandBase
 	@Override
 	public void execute()
 	{
-		intake.set(controller.getTriggerAxis(Hand.kLeft) - controller.getTriggerAxis(Hand.kRight));
+		climber.setSpeeds(-controller.getTriggerAxis(Hand.kLeft), -controller.getTriggerAxis(Hand.kRight));
 	}
 
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted)
 	{
-		intake.stop();
+		climber.stop();
 	}
 
 	// Returns true when the command should end.

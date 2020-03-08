@@ -7,8 +7,6 @@
 
 package frc.robot;
 
-import java.beans.IndexedPropertyChangeEvent;
-
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -16,15 +14,23 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DashboardConstants;
+import frc.robot.Constants.IndexerConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.TurretConstants;
 import frc.robot.commands.AimShooterUsingLimelight;
 import frc.robot.commands.DriveWithJoysticks;
+import frc.robot.commands.ExtendClimberActuators;
 import frc.robot.commands.MoveHoodToDownPosition;
 import frc.robot.commands.MoveHoodToPosition;
 import frc.robot.commands.MoveHoodToUpPosition;
 import frc.robot.commands.MoveTurretToCenterPosition;
+import frc.robot.commands.RunClimberWithGameController;
+import frc.robot.commands.RunIndexer;
 import frc.robot.commands.RunTurretWithGameController;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
@@ -48,14 +54,15 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer
 {
 	// Subsystems:
-	private Shooter shooter;
-	private Turret turret;
-	private DriveTrain driveTrain;
-	private Intake intake;
-	private Indexer indexer;
+	private final Shooter shooter;
+	private final Turret turret;
+	private final DriveTrain driveTrain;
+	private final Intake intake;
+	private final Indexer indexer;
+	private final Climber climber;
 
 	// OI devices:
-	private final XboxController xboxController;
+	private final XboxController gameController;
 	private final Joystick leftStick;
 	private final Joystick rightStick;
 
@@ -68,16 +75,17 @@ public class RobotContainer
 	public RobotContainer()
 	{
 		// Create OI devices:
-		xboxController = new XboxController(OIConstants.xboxControllerPort);
+		gameController = new XboxController(OIConstants.xboxControllerPort);
 		leftStick = new Joystick(OIConstants.leftJoystickPort);
 		rightStick = new Joystick(OIConstants.rightJoystickPort);
 
 		// Create subsystems:
 		driveTrain = new DriveTrain();
-		shooter = new Shooter(xboxController);
-		turret = new Turret(xboxController);
+		shooter = new Shooter(gameController);
+		turret = new Turret(gameController);
 		intake = new Intake();
 		indexer = new Indexer();
+		climber = new Climber(gameController);
 
 		// Create camera:
 		limelightCamera = LimelightCamera.getInstance();
@@ -85,12 +93,14 @@ public class RobotContainer
 		// Configure default commands:
 		driveTrain.setDefaultCommand(new DriveWithJoysticks(driveTrain, leftStick, rightStick));
 
-		turret.setDefaultCommand(new RunTurretWithGameController(turret, xboxController));
+		turret.setDefaultCommand(new RunTurretWithGameController(turret, gameController));
 
 		shooter.setDefaultCommand(new RunCommand(
-			() -> shooter.setPercentage(xboxController.getTriggerAxis(Hand.kLeft)),
+			() -> shooter.setPercentage(gameController.getTriggerAxis(Hand.kLeft)),
 			shooter
 		));
+
+		climber.setDefaultCommand(new RunClimberWithGameController(climber, gameController));
 
 		// Configure the button bindings
 		configureButtonBindings();
@@ -106,30 +116,45 @@ public class RobotContainer
 	 */
 	private void configureButtonBindings()
 	{
-		new JoystickButton(xboxController, Button.kStart.value)
+		new JoystickButton(gameController, Button.kA.value)
 			.whenPressed(new AimShooterUsingLimelight(turret));
 		
-		new JoystickButton(xboxController, Button.kStickLeft.value)
+		new JoystickButton(gameController, Button.kStickLeft.value)
 			.whenPressed(new MoveTurretToCenterPosition(turret));
 
-		new JoystickButton(xboxController, Button.kY.value)
-			.whenPressed(new MoveHoodToUpPosition(turret));
+		new JoystickButton(gameController, Button.kBumperLeft.value)
+			.whenPressed(new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineDriver1)));
 
-		new JoystickButton(xboxController, Button.kA.value)
-			.whenPressed(new MoveHoodToDownPosition(turret));
-		
-		new JoystickButton(xboxController, Button.kBumperLeft.value)
+		new JoystickButton(gameController, Button.kBumperRight.value)
+			.whenPressed(new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineDriver2)));
+
+		new JoystickButton(gameController, Button.kStart.value)
+			.whenPressed(new ExtendClimberActuators(climber));
+
+		// Button 1 is the trigger
+		new JoystickButton(leftStick, 1)
+			.whileHeld(new RunIndexer(intake, DashboardConstants.intakeInPercentageKey));
+
+		new JoystickButton(rightStick, 1)
+			.whileHeld(new RunIndexer(intake, DashboardConstants.intakeOutPercentageKey));
+
+		new JoystickButton(leftStick, 6)
 			.whenPressed(new InstantCommand(() -> intake.moveIntakeOut()));
 		
-		new JoystickButton(xboxController, Button.kBumperRight.value)
+		new JoystickButton(rightStick, 5)
 			.whenPressed(new InstantCommand(() -> intake.moveIntakeIn()));
+		
+		new JoystickButton(leftStick, 11)
+			.whenPressed(new InstantCommand(() -> climber.deployActuators()));		
 	}
 
 	private void initSmartDashboard()
 	{
-		SmartDashboard.putNumber(DashboardConstants.shooterTargetVelocityKey, DashboardConstants.shooterTargetVelocityDefault);
-		SmartDashboard.putNumber(DashboardConstants.hoodTargetPositionKey, DashboardConstants.hoodTargetPositionDefault);
-		SmartDashboard.putNumber(DashboardConstants.indexerPercentageKey, DashboardConstants.indexerPercentageDefault);
+		SmartDashboard.putNumber(DashboardConstants.shooterTargetVelocityKey, ShooterConstants.defaultVelocity);
+		SmartDashboard.putNumber(DashboardConstants.hoodTargetPositionKey, TurretConstants.defaultHoodTargetPosition);
+		SmartDashboard.putNumber(DashboardConstants.indexerPercentageKey, IndexerConstants.defaultSpeed);
+		SmartDashboard.putNumber(DashboardConstants.intakeInPercentageKey, IntakeConstants.defaultInSpeed);
+		SmartDashboard.putNumber(DashboardConstants.intakeOutPercentageKey, IntakeConstants.defaultOutSpeed);
 
 		SmartDashboard.putData("LL: Driver1", new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineDriver1)));
 		SmartDashboard.putData("LL: Driver2", new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineDriver2)));
@@ -137,6 +162,8 @@ public class RobotContainer
 		SmartDashboard.putData("LL: Vision1", new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineVision1)));
 		SmartDashboard.putData("LL: Vision2", new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineVision2)));
 		SmartDashboard.putData("LL: Vision3", new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineVision3)));
+
+		SmartDashboard.putData("Undeploy Climber Actuaturs", new InstantCommand(() -> climber.undeployActuators()));
 
 		//SmartDashboard.putData("Target Shooter", new SetPipelineAndAimShooter(turret));
 

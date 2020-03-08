@@ -28,10 +28,7 @@ public class RunTurretWithGameController extends CommandBase
 		this.controller = controller;
 
 		// Use addRequirements() here to declare subsystem dependencies.
-		if (turret != null)
-		{
-			addRequirements(turret);
-		}
+		addRequirements(turret);
 	}
 
 	// Called when the command is initially scheduled.
@@ -44,11 +41,8 @@ public class RunTurretWithGameController extends CommandBase
 	@Override
 	public void execute()
 	{
-		if (turret != null)
-		{
-			turret.setHood(trim(controller.getY(Hand.kRight)) * -1.0);
-			turret.setAzimuth(trim(controller.getX(Hand.kLeft)));
-		}
+		turret.setHood(filter(controller.getY(Hand.kRight)) * -1.0);
+		turret.setAzimuth(filter(controller.getX(Hand.kLeft)));
 	}
 
 	// Called once the command ends or is interrupted.
@@ -65,7 +59,7 @@ public class RunTurretWithGameController extends CommandBase
 		return false;
 	}
 
-	private double trim(double v)
+	private double filter(double v)
 	{
 		return Math.abs(v) <= 0.5 ? 0.0 : v;
 	}

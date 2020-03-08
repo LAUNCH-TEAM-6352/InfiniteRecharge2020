@@ -101,9 +101,11 @@ public final class Constants
 		public static final int rightMotorChannel = 23;
 		public static final boolean isLeftMotorInverted = false;
 		public static final boolean isRightMotorInverted = true;
+
+		public static final double defaultVelocity = 2500;
 	}
 
-		public static final class ShooterMotorConstants
+	public static final class ShooterMotorConstants
 	{
 		// This is the output of the 4:1 gearbox:
 		public static final double peakVelocityUnitsPer100ms = 20500.0;
@@ -161,6 +163,11 @@ public final class Constants
 
 		public final static int hoodDownPosition = 0;
 		public final static int hoodupPosition = 1439854;
+
+		public final static int moveHoodToPositionTolerance = 1000;
+		public final static int moveHoodToPositionTimeoutInSeconds = 3;
+
+		public static final int defaultHoodTargetPosition = 700000;
 	}
 
 	public static final class TargetingConstants
@@ -181,18 +188,25 @@ public final class Constants
 		public static final int pcmChannel = 0;
 		public static final int inSolenoidChannel = 0;
 		public static final int outSolenoidChannel = 1;
+
+		public static final double defaultInSpeed = 0.90;
+		public static final double defaultOutSpeed = -0.90;
 	}
 
 	public static final class IndexerConstants
 	{
 		public static final int rearMotorChannel = 51;
 		public static final boolean isRearMotorInverted = true;
+		public static final double defaultSpeed = 0.60;
 	}
 
 	public static final class ClimberConstants
 	{
 		public static final int leftMotorChannel = 31;
 		public static final int rightMotorChannel = 32;
+
+		public static final int outSolenoidChannel = 2;
+		public static final int inSolenoidChannel = 3;
 
 		public static final boolean isLeftMotorInverted = false;
 		public static final boolean isRightMotorInverted = false;
@@ -201,6 +215,8 @@ public final class Constants
 		public static final int leftExtendedLimit = 2;
 		public static final int rightRetractedLimit = 3;
 		public static final int rightExtendedLimit = 4;
+
+		public static final double extendSpeed = -0.5;
 	}
 
 	public static final class OIConstants
@@ -212,8 +228,6 @@ public final class Constants
 
 	public static final class DashboardConstants
 	{
-		public static final int hoodTargetPositionDefault = 700000;
-
 		public static final String setVelocityKey = "Set Velocity";
 		public static final String downHoodLimitKey = "Hood Down";
 		public static final String upHoodLimitKey = "Hood Up";
@@ -223,7 +237,6 @@ public final class Constants
 		public static final String rightAzimuthLimitKey = "Azimuth Right";
 		public static final String turretPositionKey = "Turret Pos";
 
-		public static final double shooterTargetVelocityDefault = 2500;
 		public static final String shooterTargetVelocityKey = "Shooter Vel";
 		public static final String shooterSetVelocityKey = "Shooter Vel Set";
 
@@ -232,9 +245,20 @@ public final class Constants
 		public static final String hoodTargetPositionKey = "Hood Target Pos";
 		public static final String hoodCurrentPositionKey = "Hood Current Pos";
 
-		public static final double indexerPercentageDefault = 0.60;
 		public static final String indexerPercentageKey = "Indexer %";
 
+		public static final String intakeInPercentageKey = "Intake In %";
+		public static final String intakeOutPercentageKey = "Intake Out %";
+
 		public static final String hoodMotorKey = "Hood Motor";
+
+		public static final String leftClimberExtendedLimitKey = "L Climb Ext";
+		public static final String leftClimberRetractedLimitKey = "L Climb Ret";
+		public static final String rightClimberExtendedLimitKey = "R Climb Ext";
+		public static final String rightClimberRetractedLimitKey = "R Climb Ext";
+
+		public static final String limelightTaKey = "Limelight ta";
+		public static final String limelightTxKey = "Limelight tx";
+		public static final String limelightTyKey = "Limelight ty";
 	}
 }
