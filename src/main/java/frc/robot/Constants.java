@@ -46,10 +46,10 @@ public final class Constants
 		public static final int ledModeOn = 3;
 
 		public static final int pipelineDriver1 = 0;
-		public static final int pipelineDriver2 = 1;
-		public static final int pipelineDriver3 = 2;
-		public static final int pipelineVision1 = 3;
-		public static final int pipelineVision2 = 4;
+		public static final int pipelineVision1 = 1;
+		public static final int pipelineDriver2 = 2;
+		public static final int pipelineVision2 = 3;
+		public static final int pipelineDriver3 = 4;
 		public static final int pipelineVision3 = 5;
 		public static final int pipelineDefault = pipelineDriver1;
 
@@ -58,10 +58,10 @@ public final class Constants
 		public static final int[] targetingPipelines =
 		{
 			pipelineVision1,
+			-1,
 			pipelineVision2,
+			-1,
 			pipelineVision3,
-			-1,
-			-1,
 			-1,
 			pipelineVision1,
 			pipelineVision1,
@@ -74,10 +74,10 @@ public final class Constants
 		public static final int[] drivingPipelines =
 		{
 			-1,
-			-1,
-			-1,
 			pipelineDriver1,
+			-1,
 			pipelineDriver2,
+			-1,
 			pipelineDriver3,
 			pipelineDriver1,
 			pipelineDriver1,
@@ -119,6 +119,7 @@ public final class Constants
 		public static final boolean isRightMotorInverted = true;
 
 		public static final double defaultVelocity = 2500;
+		public static final double defaultPercentage = 0.5;
 	}
 
 	public static final class ShooterMotorConstants
@@ -254,8 +255,10 @@ public final class Constants
 		public static final String rightAzimuthLimitKey = "Azimuth Right";
 		public static final String turretPositionKey = "Turret Pos";
 
-		public static final String shooterTargetVelocityKey = "Shooter Vel";
+		public static final String shooterTargetVelocityKey = "Shooter Vel Tgt";
 		public static final String shooterSetVelocityKey = "Shooter Vel Set";
+		public static final String shooterCurrentVelocityLeftKey = "Shooter Vel Left";
+		public static final String shooterCurrentVelocityRightKey = "Shooter Vel Rght";
 
 		public static final String shooterTargetPercentageKey = "Shooter %";
 

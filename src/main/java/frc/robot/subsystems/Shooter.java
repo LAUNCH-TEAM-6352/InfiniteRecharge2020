@@ -59,14 +59,14 @@ public class Shooter extends SubsystemBase
 
 	/***
 	 * Sets the shooter motor speeds in velocity (RPM).
+	 * 600.0 is 
 	 */
 	public void setVelocity(double veolcity)
 	{
 		// Velocity is measured in encoder units per 100 ms.
-
+		// 600.0 is the number of 100ms per minute.
 		var unitsPer100Ms =
-			veolcity * ShooterMotorConstants.countsPerRevolution * ShooterMotorConstants.ticksPerCount
-			/ (60.0 * 1000.0 / 100.0);
+			veolcity * ShooterMotorConstants.countsPerRevolution * ShooterMotorConstants.ticksPerCount / 600.0;
 		SmartDashboard.putNumber(DashboardConstants.shooterSetVelocityKey, unitsPer100Ms);
 		masterMotor.set(ControlMode.Velocity, unitsPer100Ms);
 	}
@@ -85,5 +85,17 @@ public class Shooter extends SubsystemBase
 	public void stop()
 	{
 		setPercentage(0);
+	}
+
+	@Override
+	public void periodic()
+	{
+		// Velocity from motor controller is units per 100ms where there are
+		// countsPerRevolution * ticksPerCount units per revolution.
+		// 600.0 is the number of 100ms per minute.
+		SmartDashboard.putNumber(DashboardConstants.shooterCurrentVelocityLeftKey,
+			600.0 * masterMotor.getSelectedSensorVelocity() / ShooterMotorConstants.countsPerRevolution / ShooterMotorConstants.ticksPerCount);
+		SmartDashboard.putNumber(DashboardConstants.shooterCurrentVelocityRightKey,
+			600.0 * slaveMotor.getSelectedSensorVelocity() / ShooterMotorConstants.countsPerRevolution / ShooterMotorConstants.ticksPerCount);
 	}
 }

@@ -41,7 +41,8 @@ public class RunClimberWithGameController extends CommandBase
 	@Override
 	public void execute()
 	{
-		climber.setSpeeds(-controller.getTriggerAxis(Hand.kLeft), -controller.getTriggerAxis(Hand.kRight));
+		double sign = controller.getStickButton(Hand.kRight) ? -1.0 : +1.0;
+		climber.setSpeeds(sign * controller.getTriggerAxis(Hand.kLeft), sign * controller.getTriggerAxis(Hand.kRight));
 	}
 
 	// Called once the command ends or is interrupted.

@@ -191,6 +191,7 @@ public class RobotContainer
 
 	private void initSmartDashboard()
 	{
+		SmartDashboard.putNumber(DashboardConstants.shooterTargetPercentageKey, ShooterConstants.defaultPercentage);
 		SmartDashboard.putNumber(DashboardConstants.shooterTargetVelocityKey, ShooterConstants.defaultVelocity);
 		SmartDashboard.putNumber(DashboardConstants.hoodTargetPositionKey, TurretConstants.defaultHoodTargetPosition);
 		SmartDashboard.putNumber(DashboardConstants.indexerForwardPercentageKey, IndexerConstants.defaultForwardSpeed);
