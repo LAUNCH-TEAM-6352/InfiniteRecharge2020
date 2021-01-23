@@ -8,7 +8,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,7 +21,7 @@ public class Intake extends SubsystemBase
 {
 	private DoubleSolenoid solenoid = new DoubleSolenoid(IntakeConstants.outSolenoidChannel, IntakeConstants.inSolenoidChannel);
 
-	private VictorSPX motor = new VictorSPX(IntakeConstants.motorChannel);
+	private TalonSRX motor = new TalonSRX(IntakeConstants.motorChannel);
 
 	public Intake()
 	{
