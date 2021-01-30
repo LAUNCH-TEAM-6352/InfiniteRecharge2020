@@ -143,6 +143,14 @@ public class RobotContainer
 				)	
 			));
 
+		// Start the shooter, allowing manual control of turret:
+		new JoystickButton(gameController, Button.kStart.value)
+			.whenPressed(new RunShooter(shooter, DashboardConstants.shooterTargetVelocityKey));
+		
+		// Stop the shooter
+		new JoystickButton(gameController, Button.kBack.value)
+			.whenPressed(new InstantCommand(() -> shooter.stop(), shooter));
+
 		// Run the indexer forward:
 		new JoystickButton(gameController, Button.kX.value)
 			.whileHeld(new RunIndexer(indexer, DashboardConstants.indexerForwardPercentageKey));
@@ -164,23 +172,23 @@ public class RobotContainer
 			.whenPressed(new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineDriver2)));
 
 		// Extend the climber actuators:
-		new JoystickButton(gameController, Button.kStart.value)
+		new JoystickButton(gameController, Button.kStickRight.value)
 			.whenPressed(new ExtendClimberActuators(climber));
 
 		// Button 1 is the trigger
-		// Run the intake in the in direction:
+		// Run the intake motor in the in direction:
 		new JoystickButton(leftStick, 1)
 			.whileHeld(new RunIntake(intake, DashboardConstants.intakeInPercentageKey));
 
-		// RUn the intake in the out direction:
+		// Run the intake motor in the out direction:
 		new JoystickButton(rightStick, 1)
 			.whileHeld(new RunIntake(intake, DashboardConstants.intakeOutPercentageKey));
 
-		// Move the intake out:
+		// Move the intake mechanism out:
 		new JoystickButton(leftStick, 6)
 			.whenPressed(new InstantCommand(() -> intake.moveIntakeOut()));
 		
-		// Move the intake in:
+		// Move the intake mechanism in:
 		new JoystickButton(rightStick, 5)
 			.whenPressed(new InstantCommand(() -> intake.moveIntakeIn()));
 		
