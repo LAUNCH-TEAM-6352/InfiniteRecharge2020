@@ -176,19 +176,19 @@ public class RobotContainer
 			.whenPressed(new ExtendClimberActuators(climber));
 
 		// Button 1 is the trigger
-		// Run the intake motor in the in direction:
-		new JoystickButton(leftStick, 1)
-			.whileHeld(new RunIntake(intake, DashboardConstants.intakeInPercentageKey));
-
 		// Run the intake motor in the out direction:
-		new JoystickButton(rightStick, 1)
+		new JoystickButton(leftStick, 1)
 			.whileHeld(new RunIntake(intake, DashboardConstants.intakeOutPercentageKey));
 
-		// Move the intake mechanism out:
+		// Run the intake motor in the in direction:
+		new JoystickButton(rightStick, 1)
+			.whileHeld(new RunIntake(intake, DashboardConstants.intakeInPercentageKey));
+
+		// Move the intake arm out:
 		new JoystickButton(leftStick, 6)
 			.whenPressed(new InstantCommand(() -> intake.moveIntakeOut()));
 		
-		// Move the intake mechanism in:
+		// Move the intake arm in:
 		new JoystickButton(rightStick, 5)
 			.whenPressed(new InstantCommand(() -> intake.moveIntakeIn()));
 		
