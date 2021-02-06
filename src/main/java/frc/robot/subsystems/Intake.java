@@ -40,11 +40,11 @@ public class Intake extends SubsystemBase
 
 	public void moveIntakeIn()
 	{
-		solenoid.set(DoubleSolenoid.Value.kReverse);
+		solenoid.set(DoubleSolenoid.Value.kForward);
 	}
 
 	public void moveIntakeOut()
 	{
-		solenoid.set(DoubleSolenoid.Value.kForward);
+		solenoid.set(DoubleSolenoid.Value.kReverse);
 	}
 }

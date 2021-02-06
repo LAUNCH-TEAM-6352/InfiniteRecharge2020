@@ -200,7 +200,7 @@ public final class Constants
 	public static final class IntakeConstants
 	{
 		public static final int motorChannel = 41;
-		public static final boolean isIntakeMotorInverted = true;
+		public static final boolean isIntakeMotorInverted = false;
 
 		public static final int pcmChannel = 0;
 		public static final int inSolenoidChannel = 0;
