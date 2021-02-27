@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -37,6 +38,7 @@ import frc.robot.commands.RunIndexer;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.RunShooter;
 import frc.robot.commands.RunTurretWithGameController;
+import frc.robot.commands.autonomous.TestAuto;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Indexer;
@@ -71,6 +73,14 @@ public class RobotContainer
 	// Camera:
 	private final LimelightCamera limelightCamera;
 
+	
+	//Autonomous Commands + Chooser
+	private final SendableChooser<Command> commandChooser;
+
+	private final TestAuto testAuto;
+
+
+
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
@@ -88,6 +98,8 @@ public class RobotContainer
 		intake = new Intake();
 		indexer = new Indexer();
 		climber = new Climber(gameController);
+		testAuto = new TestAuto();
+		commandChooser = new SendableChooser<>();
 
 		// Create camera:
 		limelightCamera = LimelightCamera.getInstance();
@@ -96,6 +108,7 @@ public class RobotContainer
 		driveTrain.setDefaultCommand(new DriveWithJoysticks(driveTrain, leftStick, rightStick));
 		turret.setDefaultCommand(new RunTurretWithGameController(turret, gameController));
 		climber.setDefaultCommand(new RunClimberWithGameController(climber, gameController));
+		commandChooser.setDefaultOption("Test Auto", testAuto);
 
 		// Configure the button bindings
 		configureButtonBindings();
@@ -220,6 +233,8 @@ public class RobotContainer
 
 		SmartDashboard.putData("Move Hood", new MoveHoodToPosition(turret, DashboardConstants.hoodTargetPositionKey));
 
+		SmartDashboard.putData("Autonomous Commands", commandChooser);
+
 		SmartDashboard.putData("Run Shooter Vel", new StartEndCommand(
 			() -> shooter.setVelocity(
 				SmartDashboard.getNumber(DashboardConstants.shooterTargetVelocityKey, 0)),
@@ -253,6 +268,6 @@ public class RobotContainer
 	public Command getAutonomousCommand()
 	{
 		// An ExampleCommand will run in autonomous
-		return null;
+		return commandChooser.getSelected();
 	}
 }
