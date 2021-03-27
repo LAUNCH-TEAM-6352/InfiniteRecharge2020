@@ -41,7 +41,6 @@ public class RunTurretWithGameController extends CommandBase
 	@Override
 	public void execute()
 	{
-		turret.setHood(filter(controller.getY(Hand.kRight)) * -1.0);
 		turret.setAzimuth(filter(controller.getX(Hand.kLeft)));
 	}
 

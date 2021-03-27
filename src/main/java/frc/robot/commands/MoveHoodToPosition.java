@@ -10,7 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.TurretConstants;
-import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Hood;
 
 /**
  * Moves the hood to the up position.
@@ -20,28 +20,28 @@ public class MoveHoodToPosition extends CommandBase
 	@SuppressWarnings(
 	{ "PMD.UnusedPrivateField", "PMD.SingularField" })
 
-	private Turret turret;
+	private Hood hood;
 	private String key = null;
 	private double position = 0;
 
-	private MoveHoodToPosition(Turret turret)
+	private MoveHoodToPosition(Hood hood)
 	{
-		this.turret = turret;
-		addRequirements(turret);
+		this.hood = hood;
+		addRequirements(hood);
 
 		// This is a backup in case we don't zero in on the target position:
 		withTimeout(TurretConstants.moveHoodToPositionTimeoutInSeconds);
 	}
 
-	public MoveHoodToPosition(Turret turret, String key)
+	public MoveHoodToPosition(Hood hood, String key)
 	{
-		this(turret);
+		this(hood);
 		this.key = key;
 	}
 
-	public MoveHoodToPosition(Turret turret, double position)
+	public MoveHoodToPosition(Hood hood, double position)
 	{
-		this(turret);
+		this(hood);
 		this.position = position;
 	}
 
@@ -59,20 +59,20 @@ public class MoveHoodToPosition extends CommandBase
 	@Override
 	public void execute()
 	{
-		turret.setHoodPosition(position);
+		hood.setHoodPosition(position);
 	}
 
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted)
 	{
-		turret.setHood(0);
+		hood.setHood(0);
 	}
 
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished()
 	{
-		return Math.abs(turret.getCurrentHoodPosition() - position) <= TurretConstants.moveHoodToPositionTolerance;
+		return Math.abs(hood.getCurrentHoodPosition() - position) <= TurretConstants.moveHoodToPositionTolerance;
 	}
 }

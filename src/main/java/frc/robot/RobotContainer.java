@@ -33,12 +33,14 @@ import frc.robot.commands.ExtendClimberActuators;
 import frc.robot.commands.MoveHoodToPosition;
 import frc.robot.commands.MoveTurretToCenterPosition;
 import frc.robot.commands.RunClimberWithGameController;
+import frc.robot.commands.RunHoodWithGameController;
 import frc.robot.commands.RunIndexer;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.RunShooter;
 import frc.robot.commands.RunTurretWithGameController;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -58,6 +60,7 @@ public class RobotContainer
 	// Subsystems:
 	private final Shooter shooter;
 	private final Turret turret;
+	private final Hood hood;
 	private final DriveTrain driveTrain;
 	private final Intake intake;
 	private final Indexer indexer;
@@ -85,6 +88,7 @@ public class RobotContainer
 		driveTrain = new DriveTrain();
 		shooter = new Shooter(gameController);
 		turret = new Turret(gameController);
+		hood = new Hood(gameController);
 		intake = new Intake();
 		indexer = new Indexer();
 		climber = new Climber(gameController);
@@ -95,6 +99,7 @@ public class RobotContainer
 		// Configure default commands:
 		driveTrain.setDefaultCommand(new DriveWithJoysticks(driveTrain, leftStick, rightStick));
 		turret.setDefaultCommand(new RunTurretWithGameController(turret, gameController));
+		hood.setDefaultCommand(new RunHoodWithGameController(hood, gameController));
 		climber.setDefaultCommand(new RunClimberWithGameController(climber, gameController));
 
 		// Configure the button bindings
@@ -218,7 +223,7 @@ public class RobotContainer
 
 		//SmartDashboard.putData("Target Shooter", new SetPipelineAndAimShooter(turret));
 
-		SmartDashboard.putData("Move Hood", new MoveHoodToPosition(turret, DashboardConstants.hoodTargetPositionKey));
+		SmartDashboard.putData("Move Hood", new MoveHoodToPosition(hood, DashboardConstants.hoodTargetPositionKey));
 
 		SmartDashboard.putData("Run Shooter Vel", new StartEndCommand(
 			() -> shooter.setVelocity(

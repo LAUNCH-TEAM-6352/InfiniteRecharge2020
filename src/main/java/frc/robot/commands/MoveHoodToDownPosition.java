@@ -9,7 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.TurretConstants;
-import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Hood;
 
 /**
  * Moves the hood to the down position.
@@ -18,16 +18,16 @@ public class MoveHoodToDownPosition extends CommandBase
 {
 	@SuppressWarnings(
 	{ "PMD.UnusedPrivateField", "PMD.SingularField" })
-	private final Turret turret;
+	private final Hood hood;
 
-	public MoveHoodToDownPosition(Turret turret)
+	public MoveHoodToDownPosition(Hood hood)
 	{
-		this.turret = turret;
+		this.hood = hood;
 
 		// Use addRequirements() here to declare subsystem dependencies.
-		if (turret != null)
+		if (hood != null)
 		{
-			addRequirements(turret);
+			addRequirements(hood);
 		}
 	}
 
@@ -41,20 +41,20 @@ public class MoveHoodToDownPosition extends CommandBase
 	@Override
 	public void execute()
 	{
-		turret.setHood(TurretConstants.moveHoodDownAutoPercentage);
+		hood.setHood(TurretConstants.moveHoodDownAutoPercentage);
 	}
 
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted)
 	{
-		turret.setHood(0);
+		hood.setHood(0);
 	}
 
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished()
 	{
-		return turret.isHoodAtDownPosition();
+		return hood.isHoodAtDownPosition();
 	}
 }

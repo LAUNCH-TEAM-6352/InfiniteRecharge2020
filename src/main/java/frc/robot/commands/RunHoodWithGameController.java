@@ -7,28 +7,28 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.TurretConstants;
 import frc.robot.subsystems.Hood;
 
 /**
- * Moves the hood to the up position.
+ * An example command that uses an example subsystem.
  */
-public class MoveHoodToUpPosition extends CommandBase
+public class RunHoodWithGameController extends CommandBase
 {
 	@SuppressWarnings(
 	{ "PMD.UnusedPrivateField", "PMD.SingularField" })
 	private final Hood hood;
+	private final XboxController controller;
 
-	public MoveHoodToUpPosition(Hood hood)
+	public RunHoodWithGameController(Hood hood, XboxController controller)
 	{
 		this.hood = hood;
+		this.controller = controller;
 
 		// Use addRequirements() here to declare subsystem dependencies.
-		if (hood != null)
-		{
-			addRequirements(hood);
-		}
+		addRequirements(hood);
 	}
 
 	// Called when the command is initially scheduled.
@@ -41,20 +41,25 @@ public class MoveHoodToUpPosition extends CommandBase
 	@Override
 	public void execute()
 	{
-		hood.setHood(TurretConstants.moveHoodUpAutoPercentage);
+		hood.setHood(filter(controller.getY(Hand.kRight)) * -1.0);
 	}
 
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted)
 	{
-		hood.setHood(0);
+		hood.stop();
 	}
 
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished()
 	{
-		return hood.isHoodAtUpPosition();
+		return false;
+	}
+
+	private double filter(double v)
+	{
+		return Math.abs(v) <= 0.5 ? 0.0 : v;
 	}
 }
