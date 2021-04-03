@@ -15,21 +15,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.DashboardConstants;
+import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.TurretConstants;
 import frc.robot.commands.AimShooterUsingLimelight;
 import frc.robot.commands.DriveWithJoysticks;
-import frc.robot.commands.ExtendClimberActuators;
 import frc.robot.commands.MoveHoodToPosition;
 import frc.robot.commands.MoveTurretToCenterPosition;
 import frc.robot.commands.RunClimberWithGameController;
@@ -116,29 +114,20 @@ public class RobotContainer
 	 */
 	private void configureButtonBindings()
 	{
-		// Start shooter motors, switch to vision procesing, aim turret
-		new JoystickButton(gameController, Button.kA.value)
-			.whenPressed(new ParallelCommandGroup(
-				new RunShooter(shooter, DashboardConstants.shooterTargetVelocityKey),
-				new SequentialCommandGroup(
-					new ConditionalCommand(
-						new SequentialCommandGroup(
-							new InstantCommand(() ->
-								LimelightCamera.getInstance().setPipeline(LimelightConstants.targetingPipelines[LimelightCamera.getInstance().getPipeline()])
-							),
-							new WaitCommand(2.0)
+		// Switch to vision procesing, aim turret, switch limelight back to driver mode
+		new JoystickButton(gameController, Button.kStickRight.value)
+			.whenPressed(new SequentialCommandGroup(
+				new ConditionalCommand(
+					new SequentialCommandGroup(
+						new InstantCommand(() ->
+							LimelightCamera.getInstance().setPipeline(LimelightConstants.targetingPipelines[LimelightCamera.getInstance().getPipeline()])
 						),
-						new WaitCommand(0),
-						() -> LimelightConstants.targetingPipelines[LimelightCamera.getInstance().getPipeline()] >= 0
+						new WaitCommand(2.0)
 					),
-					new AimShooterUsingLimelight(turret)
-				)		
-			));
-
-		// Stop the shooter motors and restore the Limelight to driver mode:
-		new JoystickButton(gameController, Button.kY.value)
-			.whenPressed(new ParallelCommandGroup(
-				new InstantCommand(() -> shooter.stop(), shooter),
+					new WaitCommand(0),
+					() -> LimelightConstants.targetingPipelines[LimelightCamera.getInstance().getPipeline()] >= 0
+				),
+				new AimShooterUsingLimelight(turret),
 				new ConditionalCommand(
 					new InstantCommand(() ->
 						LimelightCamera.getInstance().setPipeline(LimelightConstants.drivingPipelines[LimelightCamera.getInstance().getPipeline()])
@@ -147,6 +136,30 @@ public class RobotContainer
 					() -> LimelightConstants.drivingPipelines[LimelightCamera.getInstance().getPipeline()] >= 0
 				)	
 			));
+
+		// Stop the shooter motors and restore the Limelight to driver mode:
+		// new JoystickButton(gameController, Button.kY.value)
+		// 	.whenPressed(new ParallelCommandGroup(
+		// 		new InstantCommand(() -> shooter.stop(), shooter),
+		// 		new ConditionalCommand(
+		// 			new InstantCommand(() ->
+		// 				LimelightCamera.getInstance().setPipeline(LimelightConstants.drivingPipelines[LimelightCamera.getInstance().getPipeline()])
+		// 			),
+		// 			new WaitCommand(0),
+		// 			() -> LimelightConstants.drivingPipelines[LimelightCamera.getInstance().getPipeline()] >= 0
+		// 		)	
+		// 	));
+
+		// Move hood to various positions:
+		new JoystickButton(gameController, Button.kA.value)
+		    .whenPressed(new MoveHoodToPosition(hood, DashboardConstants.hoodGreenPositionKey));
+		new JoystickButton(gameController, Button.kY.value)
+			.whenPressed(new MoveHoodToPosition(hood, DashboardConstants.hoodYellowPositionKey));
+		new JoystickButton(gameController, Button.kX.value)
+			.whenPressed(new MoveHoodToPosition(hood, DashboardConstants.hoodBluePositionKey));
+		new JoystickButton(gameController, Button.kB.value)
+			.whenPressed(new MoveHoodToPosition(hood, DashboardConstants.hoodRedPositionKey));
+
 
 		// Start the shooter, allowing manual control of turret:
 		new JoystickButton(gameController, Button.kStart.value)
@@ -157,28 +170,28 @@ public class RobotContainer
 			.whenPressed(new InstantCommand(() -> shooter.stop(), shooter));
 
 		// Run the indexer forward:
-		new JoystickButton(gameController, Button.kX.value)
+		new JoystickButton(gameController, Button.kBumperRight.value)
 			.whileHeld(new RunIndexer(indexer, DashboardConstants.indexerForwardPercentageKey));
 
 		// Run the indexer reverse:
-		new JoystickButton(gameController, Button.kB.value)
-			.whileHeld(new RunIndexer(indexer, DashboardConstants.indexerReversePercentageKey));
+		//new JoystickButton(gameController, Button.kB.value)
+		//	.whileHeld(new RunIndexer(indexer, DashboardConstants.indexerReversePercentageKey));
 
 		// Move the turret to the center position:
 		new JoystickButton(gameController, Button.kStickLeft.value)
 			.whenPressed(new MoveTurretToCenterPosition(turret));
 
-		// Set the limelight to 1x driver mode:
+		// Set toggle the limelight:
 		new JoystickButton(gameController, Button.kBumperLeft.value)
-			.whenPressed(new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineDriver1)));
+			.whenPressed(new InstantCommand(() -> limelightCamera.togglePipeline(LimelightConstants.pipelineDriver1, LimelightConstants.pipelineDriver2)));
 
 		// Set the limelight to 2x driver mode:
-		new JoystickButton(gameController, Button.kBumperRight.value)
-			.whenPressed(new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineDriver2)));
+		//new JoystickButton(gameController, Button.kBumperRight.value)
+		//	.whenPressed(new InstantCommand(() -> limelightCamera.setPipeline(LimelightConstants.pipelineDriver2)));
 
 		// Extend the climber actuators:
-		new JoystickButton(gameController, Button.kStickRight.value)
-			.whenPressed(new ExtendClimberActuators(climber));
+		//new JoystickButton(gameController, Button.kStickRight.value)
+		//	.whenPressed(new ExtendClimberActuators(climber));
 
 		// Button 1 is the trigger
 		// Run the intake motor in the out direction:
@@ -206,7 +219,11 @@ public class RobotContainer
 	{
 		SmartDashboard.putNumber(DashboardConstants.shooterTargetPercentageKey, ShooterConstants.defaultPercentage);
 		SmartDashboard.putNumber(DashboardConstants.shooterTargetVelocityKey, ShooterConstants.defaultVelocity);
-		SmartDashboard.putNumber(DashboardConstants.hoodTargetPositionKey, TurretConstants.defaultHoodTargetPosition);
+		SmartDashboard.putNumber(DashboardConstants.hoodGreenPositionKey, HoodConstants.greenTargetPosition);
+		SmartDashboard.putNumber(DashboardConstants.hoodYellowPositionKey, HoodConstants.yellowTargetPosition);
+		SmartDashboard.putNumber(DashboardConstants.hoodBluePositionKey, HoodConstants.blueTargetPosition);
+		SmartDashboard.putNumber(DashboardConstants.hoodRedPositionKey, HoodConstants.redTargetPosition);
+		SmartDashboard.putNumber(DashboardConstants.hoodTargetPositionKey, HoodConstants.defaultTargetPosition);
 		SmartDashboard.putNumber(DashboardConstants.indexerForwardPercentageKey, IndexerConstants.defaultForwardSpeed);
 		SmartDashboard.putNumber(DashboardConstants.indexerReversePercentageKey, IndexerConstants.defaultReverseSpeed);
 		SmartDashboard.putNumber(DashboardConstants.intakeInPercentageKey, IntakeConstants.defaultInSpeed);
@@ -223,7 +240,7 @@ public class RobotContainer
 
 		//SmartDashboard.putData("Target Shooter", new SetPipelineAndAimShooter(turret));
 
-		SmartDashboard.putData("Move Hood", new MoveHoodToPosition(hood, DashboardConstants.hoodTargetPositionKey));
+		//SmartDashboard.putData("Move Hood", new MoveHoodToPosition(hood, DashboardConstants.hoodTargetPositionKey));
 
 		SmartDashboard.putData("Run Shooter Vel", new StartEndCommand(
 			() -> shooter.setVelocity(

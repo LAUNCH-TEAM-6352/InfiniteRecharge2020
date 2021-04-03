@@ -99,6 +99,14 @@ public class LimelightCamera
 	}
 
 	/***
+	 * Toggles between the two pipelines.
+	 */
+	public void togglePipeline(int pipeline1, int pipeline2)
+	{
+		setPipeline(getPipeline() == pipeline1 ? pipeline2 : pipeline1);
+	}
+
+	/***
 	 * Returns the camera's current pipeline.
 	 */
 	public int getPipeline()

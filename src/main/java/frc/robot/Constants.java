@@ -86,8 +86,15 @@ public final class Constants
 		};
 	}
 
-	public static final class HoodMotorConstants
+	public static final class HoodConstants
 	{
+		public static final int motorChannel = 20;
+
+		public static final int upLimitChannel = 8;
+		public static final int downLimitChannel = 9;
+
+		public static final boolean isMotorInverted = true;
+
 		public static final double peakVelocityUnitsPer100ms = 153000.0;
 
 		public static final int profileSlot = 0;
@@ -109,6 +116,24 @@ public final class Constants
 		public static final int primaryClosedLoop = 0;
 
 		public static final boolean phase = true;
+
+		public final static double moveDownAutoPercentage = -1.0;
+		public final static double moveUpAutoPercentage = +1.0;
+
+		public static final double upPercentageScaleFactor = 1.0;
+		public static final double downPercentageScaleFactor = 1.0;
+
+		public final static int downPosition = 0;
+		public final static int upPosition = 1439854;
+
+		public final static int moveToPositionTolerance = 1000;
+		public final static int moveToPositionTimeoutInSeconds = 3;
+
+		public static final int defaultTargetPosition =  700000;
+		public static final int greenTargetPosition   =  488000;
+		public static final int yellowTargetPosition  =  990000;
+		public static final int blueTargetPosition    = 1200000;
+		public static final int redTargetPosition     = 1400000;
 	}
 
 	public static final class ShooterConstants
@@ -155,36 +180,18 @@ public final class Constants
 
 	public static final class TurretConstants
 	{
-		public static final int hoodMotorChannel = 20;
 		public static final int azimuthMotorChannel = 21;
-
-		public static final int upHoodLimitChannel = 8;
-		public static final int downHoodLimitChannel = 9;
 
 		public static final int leftAzimuthLimitChannel = 5; 
 		public static final int centerAzimuthLimitChannel = 6; 
 		public static final int rightAzimuthLimitChannel = 7;
 		
 		public static final boolean isAzimuthMotorInverted = true;
-		public static final boolean isHoodMotorInverted = true;
 
-		public static final double hoodUpPercentageScaleFactor = 1.0;
-		public static final double hoodDownPercentageScaleFactor = 1.0;
 		public static final double azimuthPercentageScaleFactor = 1.00;
 
 		public static final double moveToLeftAutoPercentage = -1.0;
 		public final static double moveToRightAutoPercentage = +1.0;
-
-		public final static double moveHoodDownAutoPercentage = -1.0;
-		public final static double moveHoodUpAutoPercentage = +1.0;
-
-		public final static int hoodDownPosition = 0;
-		public final static int hoodupPosition = 1439854;
-
-		public final static int moveHoodToPositionTolerance = 1000;
-		public final static int moveHoodToPositionTimeoutInSeconds = 3;
-
-		public static final int defaultHoodTargetPosition = 700000;
 	}
 
 	public static final class TargetingConstants
@@ -262,6 +269,10 @@ public final class Constants
 
 		public static final String shooterTargetPercentageKey = "Shooter %";
 
+		public static final String hoodGreenPositionKey = "Hood Green Pos";
+		public static final String hoodYellowPositionKey = "Hood Yellow Pos";
+		public static final String hoodBluePositionKey = "Hood Blue Pos";
+		public static final String hoodRedPositionKey = "Hood Red Pos";
 		public static final String hoodTargetPositionKey = "Hood Target Pos";
 		public static final String hoodCurrentPositionKey = "Hood Current Pos";
 

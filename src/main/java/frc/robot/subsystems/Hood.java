@@ -17,18 +17,17 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DashboardConstants;
-import frc.robot.Constants.HoodMotorConstants;
-import frc.robot.Constants.TurretConstants;
+import frc.robot.Constants.HoodConstants;
 
 /***
  * A subsystem that controls the hood.
  */
 public class Hood extends SubsystemBase
 {
-	private TalonSRX hoodMotor = new TalonSRX(TurretConstants.hoodMotorChannel);
+	private TalonSRX hoodMotor = new TalonSRX(HoodConstants.motorChannel);
 
-	private DigitalInput upHoodLimit = new DigitalInput(TurretConstants.upHoodLimitChannel);
-	private DigitalInput downHoodLimit = new DigitalInput(TurretConstants.downHoodLimitChannel);
+	private DigitalInput upHoodLimit = new DigitalInput(HoodConstants.upLimitChannel);
+	private DigitalInput downHoodLimit = new DigitalInput(HoodConstants.downLimitChannel);
 
 	private XboxController controller;
 
@@ -41,44 +40,44 @@ public class Hood extends SubsystemBase
 
 		hoodMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
 		hoodMotor.configAllowableClosedloopError(
-			HoodMotorConstants.profileSlot,
-			HoodMotorConstants.pidAllowableError,
-			HoodMotorConstants.pidTimeoutMs);
+			HoodConstants.profileSlot,
+			HoodConstants.pidAllowableError,
+			HoodConstants.pidTimeoutMs);
 		hoodMotor.configClosedLoopPeakOutput(
-			HoodMotorConstants.profileSlot,
-			HoodMotorConstants.pidPeakOutput,
-			HoodMotorConstants.pidTimeoutMs);
+			HoodConstants.profileSlot,
+			HoodConstants.pidPeakOutput,
+			HoodConstants.pidTimeoutMs);
 		hoodMotor.configClosedLoopPeriod(
-			HoodMotorConstants.profileSlot,
-			HoodMotorConstants.pidLoopPeriodMs,
-			HoodMotorConstants.pidTimeoutMs);
+			HoodConstants.profileSlot,
+			HoodConstants.pidLoopPeriodMs,
+			HoodConstants.pidTimeoutMs);
 		hoodMotor.config_kP(
-			HoodMotorConstants.profileSlot,
-			HoodMotorConstants.pidP,
-			HoodMotorConstants.pidTimeoutMs);
+			HoodConstants.profileSlot,
+			HoodConstants.pidP,
+			HoodConstants.pidTimeoutMs);
 		hoodMotor.config_kI(
-			HoodMotorConstants.profileSlot,
-			HoodMotorConstants.pidI,
-			HoodMotorConstants.pidTimeoutMs);
+			HoodConstants.profileSlot,
+			HoodConstants.pidI,
+			HoodConstants.pidTimeoutMs);
 		hoodMotor.config_kD(
-			HoodMotorConstants.profileSlot,
-			HoodMotorConstants.pidD,
-			HoodMotorConstants.pidTimeoutMs);
+			HoodConstants.profileSlot,
+			HoodConstants.pidD,
+			HoodConstants.pidTimeoutMs);
 		hoodMotor.config_kF(
-			HoodMotorConstants.profileSlot,
-			HoodMotorConstants.pidFF,
-			HoodMotorConstants.pidTimeoutMs);
+			HoodConstants.profileSlot,
+			HoodConstants.pidFF,
+			HoodConstants.pidTimeoutMs);
 		hoodMotor.config_IntegralZone(
-			HoodMotorConstants.profileSlot,
-			HoodMotorConstants.pidIZ,
-			HoodMotorConstants.pidTimeoutMs);
+			HoodConstants.profileSlot,
+			HoodConstants.pidIZ,
+			HoodConstants.pidTimeoutMs);
 		hoodMotor.selectProfileSlot(
-			HoodMotorConstants.profileSlot,
-			HoodMotorConstants.primaryClosedLoop);
+			HoodConstants.profileSlot,
+			HoodConstants.primaryClosedLoop);
 
-		hoodMotor.setSensorPhase(HoodMotorConstants.phase);
+		hoodMotor.setSensorPhase(HoodConstants.phase);
 
-		hoodMotor.setInverted(TurretConstants.isHoodMotorInverted);
+		hoodMotor.setInverted(HoodConstants.isMotorInverted);
 	}
 
 	/**
@@ -117,8 +116,8 @@ public class Hood extends SubsystemBase
 
 		// Scale percentage to reasonable speed:
 		percentage *= percentage < 0
-			? TurretConstants.hoodDownPercentageScaleFactor
-			: TurretConstants.hoodUpPercentageScaleFactor;
+			? HoodConstants.downPercentageScaleFactor
+			: HoodConstants.upPercentageScaleFactor;
 		hoodMotor.set(ControlMode.PercentOutput, percentage);
 	}
 

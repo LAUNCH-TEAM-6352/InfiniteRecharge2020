@@ -8,7 +8,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.TurretConstants;
+import frc.robot.Constants.HoodConstants;
 import frc.robot.subsystems.Hood;
 
 /**
@@ -41,7 +41,7 @@ public class MoveHoodToDownPosition extends CommandBase
 	@Override
 	public void execute()
 	{
-		hood.setHood(TurretConstants.moveHoodDownAutoPercentage);
+		hood.setHood(HoodConstants.moveDownAutoPercentage);
 	}
 
 	// Called once the command ends or is interrupted.

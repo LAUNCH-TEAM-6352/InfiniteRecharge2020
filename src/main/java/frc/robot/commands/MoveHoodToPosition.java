@@ -9,7 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.TurretConstants;
+import frc.robot.Constants.HoodConstants;
 import frc.robot.subsystems.Hood;
 
 /**
@@ -30,7 +30,7 @@ public class MoveHoodToPosition extends CommandBase
 		addRequirements(hood);
 
 		// This is a backup in case we don't zero in on the target position:
-		withTimeout(TurretConstants.moveHoodToPositionTimeoutInSeconds);
+		//withTimeout(HoodConstants.moveToPositionTimeoutInSeconds);
 	}
 
 	public MoveHoodToPosition(Hood hood, String key)
@@ -73,6 +73,6 @@ public class MoveHoodToPosition extends CommandBase
 	@Override
 	public boolean isFinished()
 	{
-		return Math.abs(hood.getCurrentHoodPosition() - position) <= TurretConstants.moveHoodToPositionTolerance;
+		return Math.abs(hood.getCurrentHoodPosition() - position) <= HoodConstants.moveToPositionTolerance;
 	}
 }
