@@ -29,6 +29,7 @@ public class MoveHoodToPosition extends CommandBase
 		this.hood = hood;
 		addRequirements(hood);
 
+		// Had to comment out the following because it made the command look like it was part of a command group.
 		// This is a backup in case we don't zero in on the target position:
 		//withTimeout(HoodConstants.moveToPositionTimeoutInSeconds);
 	}
